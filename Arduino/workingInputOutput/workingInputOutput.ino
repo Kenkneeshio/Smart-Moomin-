@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Adafruit_NeoPixel.h>
+#include <stdio.h>
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
@@ -27,6 +28,19 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
+
+// find max for color fix
+int findMax(int a, int b, int c) {
+  if (a>=b && a >= c) {
+    return a;
+  }
+  else if (b >= a && b>= c) {
+    return b;
+  }
+  else {
+    return c;
+  }
+}
 
 void setup(void) {
   Serial.begin(9600);
@@ -68,13 +82,20 @@ void loop(void) {
 
     pixels.clear(); // Set all pixel colors to 'off'
 
+//color fix
+int maxRGB = findMax(r, g, b);
+ int r1 = (r/maxRGB)*255;
+ int g1 = (g/maxRGB)*255;
+ int b1 = (b/maxRGB)*255;
+//
+
   // The first NeoPixel in a strand is #0, second is 1, all the way up
   // to the count of pixels minus one.
   for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
 
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
     // Here we're using a moderately bright green color:
-    pixels.setPixelColor(i, pixels.Color(r, g, b));
+    pixels.setPixelColor(i, pixels.Color(r1, g1, b1));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
