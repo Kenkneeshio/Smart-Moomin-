@@ -1,3 +1,7 @@
+/*
+project name: smart moomin
+current bugs: update rate, brightness scaling, sensor scaling
+*/
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Adafruit_NeoPixel.h>
@@ -29,7 +33,7 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 /* Initialise with specific int time and gain values */
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
 
-// find max for color fix
+/* find max for color fix
 int findMax(int a, int b, int c) {
   if (a>=b && a >= c) {
     return a;
@@ -41,7 +45,7 @@ int findMax(int a, int b, int c) {
     return c;
   }
 }
-
+*/
 void setup(void) {
   Serial.begin(9600);
 
@@ -63,31 +67,42 @@ void setup(void) {
   // Now we're ready to get readings!
 }
 
-void loop(void) {
-  uint16_t r, g, b, c, colorTemp, lux;
 
+void loop(void) {
+  uint16_t r, g, b, c, colorTemp, lux; //Init variables at 0
+
+
+ 
   tcs.getRawData(&r, &g, &b, &c);
+
+  uint8_t r8 = (uint8_t)(((uint32_t)r*255) / 65535);
+  uint8_t g8 = (uint8_t)(((uint32_t)g*255) / 65535);
+   uint8_t b8 = (uint8_t)(((uint32_t)b*255) / 65535);
   // colorTemp = tcs.calculateColorTemperature(r, g, b);
   colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
   lux = tcs.calculateLux(r, g, b);
+ 
+  //Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
+ // Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
+  Serial.print("R8: "); Serial.print(r8); Serial.print(" ");
+  Serial.print("G8: "); Serial.print(g8); Serial.print(" ");
+  Serial.print("B8: "); Serial.print(b8); Serial.print(" ");
 
-  Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
-  Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
-  Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
-  Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
-  Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
-  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+  Serial.print("R: "); Serial.print(r); Serial.print(" ");
+  Serial.print("G: "); Serial.print(g); Serial.print(" ");
+  Serial.print("B: "); Serial.print(b); Serial.print(" ");
+  //Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
   Serial.println(" ");
 
 
     pixels.clear(); // Set all pixel colors to 'off'
 
-//color fix
+/*color fix
 int maxRGB = findMax(r, g, b);
- int r1 = (r/maxRGB)*255;
- int g1 = (g/maxRGB)*255;
- int b1 = (b/maxRGB)*255;
-//
+ int r1 = r/(1/256);
+ int g1 = g/(1/256);
+ int b1 = b/(1/256);
+*/
 
   // The first NeoPixel in a strand is #0, second is 1, all the way up
   // to the count of pixels minus one.
@@ -95,7 +110,10 @@ int maxRGB = findMax(r, g, b);
 
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
     // Here we're using a moderately bright green color:
-    pixels.setPixelColor(i, pixels.Color(r1, g1, b1));
+    /*r = r*(1/256);
+    g = g*(1/256);
+    b = b*(1/256);*/
+    pixels.setPixelColor(i, pixels.Color(r8, g8, b8 ));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
