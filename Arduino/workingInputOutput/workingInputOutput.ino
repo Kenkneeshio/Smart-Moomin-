@@ -1,7 +1,7 @@
 /*
 project name: smart moomin
 current bugs: update rate, brightness scaling, sensor scaling
-fix blinking, only accurate w color light scoure
+, only accurate w color light scoure
 add feature: add button, create all in one board
 */
 #include <Wire.h>
@@ -90,9 +90,11 @@ void loop(void) {
   Serial.print("G8: "); Serial.print(g8); Serial.print(" ");
   Serial.print("B8: "); Serial.print(b8); Serial.print(" ");
 
+  /*
   Serial.print("R: "); Serial.print(r); Serial.print(" ");
   Serial.print("G: "); Serial.print(g); Serial.print(" ");
   Serial.print("B: "); Serial.print(b); Serial.print(" ");
+  */
   //Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
   Serial.println(" ");
 
@@ -116,10 +118,11 @@ int maxRGB = findMax(r, g, b);
     g = g*(1/256);
     b = b*(1/256);*/
    // pixels.setPixelColor(i, pixels.Color(r8, g8, b8 ));
-    pixels.setPixelColor(i, pixels.Color(20, 20, 0 ));
+    pixels.setPixelColor(i, pixels.Color(r8, g8,b8 ));
 
-    pixels.show();   // Send the updated pixel colors to the hardware.
+   //pixels.show();   // Send the updated pixel colors to the hardware.
 
     delay(DELAYVAL); // Pause before next pass through loop
   }
+  pixels.show(); // Send the updated pixel colors to the hardware. outside the loop so it doesn't blink.
 }
