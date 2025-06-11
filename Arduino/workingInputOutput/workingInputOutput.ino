@@ -1,6 +1,8 @@
 /*
 project name: smart moomin
 current bugs: update rate, brightness scaling, sensor scaling
+fix blinking, only accurate w color light scoure
+add feature: add button, create all in one board
 */
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
@@ -113,7 +115,8 @@ int maxRGB = findMax(r, g, b);
     /*r = r*(1/256);
     g = g*(1/256);
     b = b*(1/256);*/
-    pixels.setPixelColor(i, pixels.Color(r8, g8, b8 ));
+   // pixels.setPixelColor(i, pixels.Color(r8, g8, b8 ));
+    pixels.setPixelColor(i, pixels.Color(20, 20, 0 ));
 
     pixels.show();   // Send the updated pixel colors to the hardware.
 
